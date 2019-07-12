@@ -1,11 +1,11 @@
 import axios from "axios";
 import qs from "qs";
-import { use } from "easy-peasy";
+import { clearLocalStorageAuthData } from "../helpers/localStorage";
 
-function parseError(response) {
-  // if (response.code === 401) {
-  //   useActions(actions => actions.auth.setAuthData);
-  // }
+function parseError(res) {
+  if (res.status_code === 401) {
+    clearLocalStorageAuthData();
+  }
 
   // // error
   // if (messages) {
@@ -18,7 +18,7 @@ function parseError(response) {
   //   return Promise.reject({ messages: ["エラーが発生しました"] });
   // }
 
-  return response;
+  return res;
 }
 
 /**

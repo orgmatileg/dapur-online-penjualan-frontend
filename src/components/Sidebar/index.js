@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import Logo from "../../assets/logo/logo-default.png";
 import "./Sidebar.css";
 
-function Sidebar(props) {
-  console.log(props, "sidebar");
+function Sidebar() {
   const heightMenu = 80;
 
   return (
@@ -40,7 +39,7 @@ function Sidebar(props) {
           <Row type="flex" justify="center" align="middle">
             <Link
               className="disableStyle"
-              to="/admin/penjualan"
+              to="/admin/transaksi"
               style={{ textDecoration: "none" }}
             >
               <Icon type="shop" style={{ fontSize: 35, width: "100%" }} />
@@ -58,8 +57,10 @@ function Sidebar(props) {
         </Menu.Item>
         <Menu.Item key="4" style={{ height: heightMenu, paddingTop: 10 }}>
           <Row type="flex" justify="center" align="middle">
-            <Icon type="tags" style={{ fontSize: 35, width: "100%" }} />
-            <p>TIPE PRODUK</p>
+            <Link className="disableStyle" to="/admin/tipe-produk">
+              <Icon type="tags" style={{ fontSize: 35, width: "100%" }} />
+              <p>TIPE PRODUK</p>
+            </Link>
           </Row>
         </Menu.Item>
         <Menu.Item key="5" style={{ height: heightMenu, paddingTop: 10 }}>
@@ -75,8 +76,10 @@ function Sidebar(props) {
         </Menu.Item>
         <Menu.Item key="6" style={{ height: heightMenu, paddingTop: 10 }}>
           <Row type="flex" justify="center" align="middle">
-            <Icon type="safety" style={{ fontSize: 35, width: "100%" }} />
-            <p>USER ROLES</p>
+            <Link className="disableStyle" to="/admin/peran-pengguna">
+              <Icon type="safety" style={{ fontSize: 35, width: "100%" }} />
+              <p>PERAN PENGGUNA</p>
+            </Link>
           </Row>
         </Menu.Item>
       </Menu>

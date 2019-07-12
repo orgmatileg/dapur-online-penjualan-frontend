@@ -10,10 +10,12 @@ function Login(props) {
   const login = useStoreActions(actions => actions.auth.login);
   const handleSubmit = e => {
     e.preventDefault();
-    props.form.validateFields((err, values) => {
+    props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
-        login(values);
+        const success = await login(values);
+        if (success === true) {
+          return props.history.push("/admin");
+        }
       }
     });
   };

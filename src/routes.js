@@ -7,14 +7,32 @@ import AdminPage from "./modules/AdminPage";
 
 // PAGES
 import Page404 from "./modules/Page404";
-import Produk from "./modules/Produk";
 import Dashboard from "./modules/Dashboard";
-import Penjualan from "./modules/Penjualan";
+
+// Transaksi
+import Produk from "./modules/Produk";
+import ProdukAdd from "./modules/Produk/Add";
+import ProdukEdit from "./modules/Produk/Edit";
+
+// Transaksi
+import Transaksi from "./modules/Transaksi";
+import TransaksiAdd from "./modules/Transaksi/Add";
+import TransaksiEdit from "./modules/Transaksi/Edit";
 
 // Pengguna
 import Pengguna from "./modules/Pengguna";
 import PenggunaAdd from "./modules/Pengguna/Add";
 import PenggunaEdit from "./modules/Pengguna/Edit";
+
+// PeranPengguna
+import PeranPengguna from "./modules/PeranPengguna";
+import PeranPenggunaAdd from "./modules/PeranPengguna/Add";
+import PeranPenggunaEdit from "./modules/PeranPengguna/Edit";
+
+// PeranPengguna
+import TipeProduk from "./modules/TipeProduk";
+import TipeProdukAdd from "./modules/TipeProduk/Add";
+import TipeProdukEdit from "./modules/TipeProduk/Edit";
 
 export const routes = [
   {
@@ -35,13 +53,45 @@ export const routes = [
         path: "/admin",
         component: Dashboard
       },
+
+      // SESI PRODUK
+      {
+        path: "/admin/transaksi",
+        component: Transaksi
+      },
+      {
+        path: "/admin/transaksi/add",
+        component: TransaksiAdd
+      },
+      {
+        path: "/admin/transaksi/edit/:id",
+        component: TransaksiEdit
+      },
+      // SESI PRODUK
       {
         path: "/admin/produk",
         component: Produk
       },
       {
-        path: "/admin/penjualan",
-        component: Penjualan
+        path: "/admin/produk/add",
+        component: ProdukAdd
+      },
+      {
+        path: "/admin/produk/edit/:id",
+        component: ProdukEdit
+      },
+      // SESI PENGGUNA
+      {
+        path: "/admin/tipe-produk",
+        component: TipeProduk
+      },
+      {
+        path: "/admin/tipe-produk/add",
+        component: TipeProdukAdd
+      },
+      {
+        path: "/admin/tipe-produk/edit/:id",
+        component: TipeProdukEdit
       },
       // SESI PENGGUNA
       {
@@ -55,6 +105,19 @@ export const routes = [
       {
         path: "/admin/pengguna/edit/:id",
         component: PenggunaEdit
+      },
+      // SESI PERAN PENGGUNA
+      {
+        path: "/admin/peran-pengguna",
+        component: PeranPengguna
+      },
+      {
+        path: "/admin/peran-pengguna/add",
+        component: PeranPenggunaAdd
+      },
+      {
+        path: "/admin/peran-pengguna/edit/:id",
+        component: PeranPenggunaEdit
       }
     ]
   },
