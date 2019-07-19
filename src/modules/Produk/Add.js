@@ -1,11 +1,13 @@
 import React from "react";
 import Form from "./Form";
+import { Modal } from "antd";
 
-function Add() {
+function Add({ visible = false }) {
+  const title = "Tambah Produk";
   return (
-    <div>
+    <Modal title={title} visible={visible}>
       <Form />
-    </div>
+    </Modal>
   );
 }
 
