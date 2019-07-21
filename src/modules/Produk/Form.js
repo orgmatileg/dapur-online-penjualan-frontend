@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 
-import { Form, Icon, Input, InputNumber, Row, Col, Select, Upload } from "antd";
+import { Form, Icon, Input, InputNumber, Row, Col, Select } from "antd";
+import SingleUpload from "../../components/_reuseable/SingleUpload";
 
 const { Option } = Select;
 
-function FormProduk(props) {
-  const { getFieldDecorator } = props.form;
+function FormProduk({ form }) {
+  const { getFieldDecorator } = form;
   const getList = useStoreActions(
     actions => actions.tipeProduk.getListTipeProduk
   );
@@ -20,7 +21,7 @@ function FormProduk(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    props.form.validateFields((err, values) => {
+    form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
       }
@@ -43,7 +44,7 @@ function FormProduk(props) {
             rules: [{ required: true, message: "Mohon masukkan nama produk!" }]
           })(
             <Input
-              prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
+              prefix={<Icon type="tag" style={{ color: "rgba(0,0,0,.25)" }} />}
               placeholder="Nama Produk"
             />
           )}
@@ -75,14 +76,15 @@ function FormProduk(props) {
                 ]
               })(
                 <InputNumber
-                  defaultValue={0}
+                  name="capital_price"
+                  min={0}
                   prefix={
                     <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
                   }
                   formatter={value =>
-                    `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    `Rp${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
-                  parser={value => value.replace(/\Rp \s?|(,*)/g, "")}
+                  parser={value => value.replace(/\Rp\s?|(,*)/g, "")}
                   style={{ width: "100%" }}
                 />
               )}
@@ -96,14 +98,14 @@ function FormProduk(props) {
                 ]
               })(
                 <InputNumber
-                  defaultValue={0}
+                  min={0}
                   prefix={
                     <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
                   }
                   formatter={value =>
                     `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
-                  parser={value => value.replace(/\Rp \s?|(,*)/g, "")}
+                  parser={value => value.replace(/Rp \s?|(,*)/g, "")}
                   placeholder="Harga Jual"
                   style={{ width: "100%" }}
                 />
@@ -116,7 +118,9 @@ function FormProduk(props) {
             rules: null
           })(
             <Input
-              prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+              prefix={
+                <Icon type="profile" style={{ color: "rgba(0,0,0,.25)" }} />
+              }
               placeholder="Deskripsi (Opsional)"
             />
           )}
@@ -126,16 +130,7 @@ function FormProduk(props) {
             {getFieldDecorator("image", {
               valuePropName: "fileList",
               getValueFromEvent: normFile
-            })(
-              <Upload.Dragger type="select" name="files" action="/upload.do">
-                <p className="ant-upload-drag-icon">
-                  <Icon type="inbox" />
-                </p>
-                <p className="ant-upload-text">
-                  Pilih gambar atau tarik gambar ke area ini untuk unggah
-                </p>
-              </Upload.Dragger>
-            )}
+            })(<SingleUpload />)}
           </div>
         </Form.Item>
       </Form>

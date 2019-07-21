@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Layout, Card } from "antd";
+import { useStoreActions } from "easy-peasy";
 
 import { Route } from "react-router-dom";
 // HELPERS
@@ -9,6 +10,20 @@ import { isTokenJWTExpired } from "../../helpers/jwt";
 const { Header, Footer, Sider, Content } = Layout;
 
 function AdminPage(props) {
+  const setCurrentRoute = useStoreActions(
+    actions => actions.router.setCurrentRoute
+  );
+
+  // Set current route to redux easy peasy
+  const arrCurrentRoute = props.location.pathname.split("/");
+  switch (arrCurrentRoute.length) {
+    case 3:
+      setCurrentRoute(arrCurrentRoute[2]);
+      break;
+    default:
+      setCurrentRoute("dashboard");
+  }
+
   const { routes } = props;
   const yearNow = new Date().getFullYear();
 

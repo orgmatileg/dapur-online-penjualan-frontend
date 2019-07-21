@@ -1,7 +1,14 @@
 import { action, thunk } from "easy-peasy";
 import { http } from "../config/axios";
+import { message } from "antd";
 
 export default {
+  router: {
+    currentRoute: "",
+    setCurrentRoute: action((state, payload) => {
+      state.currentRoute = payload;
+    })
+  },
   checker: {
     checkStatusCode401: () => action((state, payload) => {})
   },
@@ -76,6 +83,15 @@ export default {
       const res = await http.get("product", { params: { limit: 10000 } });
       if (res.status_code === 200) {
         actions.setProduk(res.payload);
+      }
+    }),
+    deleteProduk: thunk(async (actions, id) => {
+      const res = await http.delete(`product/${id}`, {
+        params: { limit: 10000 }
+      });
+      if (res.status_code === 200) {
+        actions.getListProduk();
+        message.success("Berhasil menghapus produk!");
       }
     })
   }
