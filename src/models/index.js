@@ -9,9 +9,6 @@ export default {
       state.currentRoute = payload;
     })
   },
-  checker: {
-    checkStatusCode401: () => action((state, payload) => {})
-  },
   auth: {
     authData: {
       nama_lengkap: "",
@@ -24,14 +21,15 @@ export default {
     }),
     login: thunk(async (actions, payload) => {
       const res = await http.post("login", payload);
-      if (res.status_code === 200) {
-        actions.setAuthData(res.payload);
-
-        const payloadStr = JSON.stringify(res.payload);
-        localStorage.setItem("auth_data", payloadStr);
-        return true;
+      switch (res.status_code) {
+        case 200:
+          actions.setAuthData(res.payload);
+          const payloadStr = JSON.stringify(res.payload);
+          localStorage.setItem("auth_data", payloadStr);
+          return true;
+        default:
+          return false;
       }
-      return false;
     })
   },
 
@@ -62,36 +60,219 @@ export default {
   },
 
   tipeProduk: {
-    listTipeProduk: [],
-    setTipeProduk: action((state, payload) => {
-      state.listTipeProduk = payload;
+    // STATE
+    data: {
+      product_types_id: 0,
+      product_types_name: ""
+    },
+    list: [],
+    visibleModalAdd: false,
+    visibleModalEdit: false,
+
+    // ACTION SETTER
+    setData: action((state, payload) => {
+      state.data = payload;
     }),
-    getListTipeProduk: thunk(async (actions, payload) => {
+    setList: action((state, payload) => {
+      state.list = payload;
+    }),
+    setVisibleModalAdd: action((state, payload) => {
+      state.visibleModalAdd = payload;
+    }),
+    setVisibleModalEdit: action((state, payload) => {
+      state.visibleModalEdit = payload;
+    }),
+
+    // ACTION THUNK / API
+    post: thunk(async (actions, payload) => {
+      const res = await http.post("product-types", payload);
+      switch (res.status_code) {
+        case 200:
+          actions.getList();
+          actions.setVisibleModalAdd(false);
+          message.success("Berhasil menambah tipe produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    getList: thunk(async (actions, payload) => {
       const res = await http.get("product-types", { params: { limit: 10000 } });
-      if (res.status_code === 200) {
-        actions.setTipeProduk(res.payload);
+      switch (res.status_code) {
+        case 200:
+          actions.setList(res.payload);
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    getOne: thunk(async (actions, payload) => {
+      const res = await http.get(`product-types/${payload}`);
+      switch (res.status_code) {
+        case 200:
+          actions.setData(res.payload);
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    put: thunk(async (actions, payload) => {
+      const { id, data } = payload;
+      const res = await http.put(`product-types/${id}`, data);
+      switch (res.status_code) {
+        case 200:
+          actions.setData({
+            product_types_id: 0,
+            product_types_name: ""
+          });
+          actions.getList();
+          actions.setVisibleModalEdit(false);
+          message.success("Berhasil mengubah tipe produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    delete: thunk(async (actions, id) => {
+      const res = await http.delete(`product-types/${id}`);
+      switch (res.status_code) {
+        case 200:
+          actions.getList();
+          message.success("Berhasil menghapus tipe produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
       }
     })
   },
 
   produk: {
-    listProduk: [],
-    setProduk: action((state, payload) => {
-      state.listProduk = payload;
+    // STATE
+    data: {
+      product_types: {
+        product_types_id: 0,
+        product_types_name: ""
+      },
+      name: "",
+      description: "",
+      capital_price: 0,
+      selling_price: 0,
+      image: ""
+    },
+    list: [],
+    visibleModalAdd: false,
+    visibleModalEdit: false,
+
+    // ACTION SETTER
+    setData: action((state, payload) => {
+      state.data = payload;
     }),
-    getListProduk: thunk(async (actions, payload) => {
-      const res = await http.get("product", { params: { limit: 10000 } });
-      if (res.status_code === 200) {
-        actions.setProduk(res.payload);
+    setList: action((state, payload) => {
+      state.list = payload;
+    }),
+    setVisibleModalAdd: action((state, payload) => {
+      state.visibleModalAdd = payload;
+    }),
+    setVisibleModalEdit: action((state, payload) => {
+      state.visibleModalEdit = payload;
+    }),
+
+    // ACTION THUNK / API
+    post: thunk(async (actions, payload) => {
+      const res = await http.post("product", payload);
+      switch (res.status_code) {
+        case 200:
+          actions.getList();
+          actions.setVisibleModalAdd(false);
+          message.success("Berhasil menambah produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
       }
     }),
-    deleteProduk: thunk(async (actions, id) => {
-      const res = await http.delete(`product/${id}`, {
-        params: { limit: 10000 }
-      });
-      if (res.status_code === 200) {
-        actions.getListProduk();
-        message.success("Berhasil menghapus produk!");
+    getList: thunk(async (actions, payload) => {
+      const res = await http.get("product", { params: { limit: 10000 } });
+      switch (res.status_code) {
+        case 200:
+          actions.setList(res.payload);
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    getOne: thunk(async (actions, payload) => {
+      const res = await http.get(`product/${payload}`);
+      switch (res.status_code) {
+        case 200:
+          actions.setData(res.payload);
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    put: thunk(async (actions, payload) => {
+      const { id, data } = payload;
+      const res = await http.put(`product/${id}`, data);
+      switch (res.status_code) {
+        case 200:
+          actions.setData({
+            product_types: {
+              product_types_id: 0,
+              product_types_name: ""
+            },
+            name: "",
+            description: "",
+            capital_price: 0,
+            selling_price: 0,
+            image: ""
+          });
+          actions.getList();
+          actions.setVisibleModalEdit(false);
+          message.success("Berhasil mengubah produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
+      }
+    }),
+    delete: thunk(async (actions, id) => {
+      const res = await http.delete(`product/${id}`);
+      switch (res.status_code) {
+        case 200:
+          actions.getList();
+          message.success("Berhasil menghapus produk!");
+          break;
+        case 403:
+          message.error(res.description);
+          break;
+        default:
+          console.log("unhandled response code action");
       }
     })
   }

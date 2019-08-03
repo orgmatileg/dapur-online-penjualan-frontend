@@ -1,12 +1,23 @@
 import React, { Fragment, useEffect } from "react";
 import uuid from "uuid";
-import { Table, Row, Col, Button, Icon, Popconfirm } from "antd";
+import { Table, Row, Col, Button, Icon, Popconfirm, Tag } from "antd";
 import { useStoreActions, useStoreState } from "easy-peasy";
+import numeral from "numeral";
 
-function List({ handleVisibleAdd }) {
-  const getList = useStoreActions(actions => actions.produk.getListProduk);
-  const deleteProduk = useStoreActions(actions => actions.produk.deleteProduk);
-  const listProduk = useStoreState(state => state.produk.listProduk);
+function List() {
+  // STATE
+  const listData = useStoreState(state => state.produk.list);
+
+  // ACTION
+  const getList = useStoreActions(actions => actions.produk.getList);
+  const getOne = useStoreActions(actions => actions.produk.getOne);
+  const deleteData = useStoreActions(actions => actions.produk.delete);
+  const setVisibleModalAdd = useStoreActions(
+    actions => actions.produk.setVisibleModalAdd
+  );
+  const setVisibleModalEdit = useStoreActions(
+    actions => actions.produk.setVisibleModalEdit
+  );
 
   const columns = [
     {
@@ -22,27 +33,37 @@ function List({ handleVisibleAdd }) {
     },
     {
       title: "Tipe Produk",
-      dataIndex: "product_types.product_types_name"
+      dataIndex: "product_types.product_types_name",
+      render: data => <Tag color="orange">{data}</Tag>
     },
     {
       title: "Harga Modal",
-      dataIndex: "capital_price"
+      dataIndex: "capital_price",
+      render: data => <span>{numeral(data).format("0,0")}</span>
     },
     {
       title: "Harga Jual",
-      dataIndex: "selling_price"
+      dataIndex: "selling_price",
+      render: data => <span>{numeral(data).format("0,0")}</span>
     },
     {
       title: "Aksi",
       render: data => (
         <div>
           <span style={{ marginRight: 10 }}>
-            <Icon style={{ fontSize: 20, color: "#1890ff" }} type="edit" />
+            <Icon
+              onClick={() => {
+                getOne(data.product_id);
+                setVisibleModalEdit(true);
+              }}
+              style={{ fontSize: 20, color: "#1890ff" }}
+              type="edit"
+            />
           </span>
           <span>
             <Popconfirm
               title="Apakah Anda yakin ingin menghapus produk ini?"
-              onConfirm={() => deleteProduk(data.product_id)}
+              onConfirm={() => deleteData(data.product_id)}
               placement="leftBottom"
               okText="Yes"
               cancelText="No"
@@ -66,15 +87,15 @@ function List({ handleVisibleAdd }) {
           <h1>List Produk</h1>
         </Col>
         <Col>
-          <Button onClick={() => handleVisibleAdd(true)} type="primary">
+          <Button onClick={() => setVisibleModalAdd(true)} type="primary">
             TAMBAH <Icon type="plus" />
           </Button>
         </Col>
       </Row>
       <Table
         pagination={{ pageSize: 5 }}
-        rowKey={uuid.v4()}
-        dataSource={listProduk}
+        rowKey={() => uuid.v4()}
+        dataSource={listData}
         columns={columns}
       />
       ;

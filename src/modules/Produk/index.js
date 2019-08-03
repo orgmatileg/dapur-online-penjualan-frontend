@@ -1,21 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 
 // COMPONENTS
 import List from "./List";
 import Add from "./Add";
+import Edit from "./Edit";
 
 function Pengguna() {
-  const [visibleAdd, setVisibleAdd] = useState(false);
-  // const [visibleEdit, setVisibleEdit] = useState(false);
-
-  const handleVisibleAdd = bool => {
-    setVisibleAdd(bool);
-  };
-
   return (
     <div>
-      <Add visible={visibleAdd} handleVisibleAdd={handleVisibleAdd} />
-      <List handleVisibleAdd={handleVisibleAdd} />
+      <Add />
+      <Edit />
+      <List />
     </div>
   );
 }

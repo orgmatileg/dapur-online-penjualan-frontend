@@ -1,14 +1,19 @@
 import React from "react";
 import Form from "./Form";
 import { Modal } from "antd";
+import { useStoreState, useStoreActions } from "easy-peasy";
 
-function Add({ visible = false, handleVisibleAdd }) {
-  const title = "Tambah Produk";
+function Add() {
+  const visibleModalAdd = useStoreState(state => state.produk.visibleModalAdd);
+  const setVisibleModalAdd = useStoreActions(
+    actions => actions.produk.setVisibleModalAdd
+  );
   return (
     <Modal
-      title={title}
-      visible={visible}
-      onCancel={() => handleVisibleAdd(false)}
+      title="Tambah Produk"
+      visible={visibleModalAdd}
+      footer={null}
+      onCancel={() => setVisibleModalAdd(false)}
     >
       <Form />
     </Modal>

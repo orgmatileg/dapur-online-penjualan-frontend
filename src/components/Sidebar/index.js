@@ -46,7 +46,7 @@ function Sidebar() {
         <img src={Logo} alt="logo" width={100} height={100} />
       </div>
       <Menu
-        selectedKeys={selectedMenu}
+        selectedKeys={[selectedMenu]}
         defaultOpenKeys={["sub1"]}
         theme="dark"
         style={{ fontWeight: "bold" }}

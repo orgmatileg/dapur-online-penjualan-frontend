@@ -1,44 +1,87 @@
 import React, { useEffect } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 
-import { Form, Icon, Input, InputNumber, Row, Col, Select } from "antd";
-import SingleUpload from "../../components/_reuseable/SingleUpload";
+import { Form, Icon, Input, InputNumber, Row, Col, Select, Button } from "antd";
+// import SingleUpload from "../../components/_reuseable/SingleUpload";
 
 const { Option } = Select;
 
 function FormProduk({ form }) {
   const { getFieldDecorator } = form;
-  const getList = useStoreActions(
-    actions => actions.tipeProduk.getListTipeProduk
-  );
+
+  // STATE
   const listTipeProduk = useStoreState(
     state => state.tipeProduk.listTipeProduk
   );
+  const visibleModalEdit = useStoreState(
+    state => state.produk.visibleModalEdit
+  );
+  const data = useStoreState(state => state.produk.data);
+
+  // ACTION
+  const postData = useStoreActions(actions => actions.produk.post);
+  const putData = useStoreActions(actions => actions.produk.put);
+  const getListTipeProduk = useStoreActions(
+    actions => actions.tipeProduk.getListTipeProduk
+  );
+  const setVisibleModalAdd = useStoreActions(
+    actions => actions.produk.setVisibleModalAdd
+  );
+  const setVisibleModalEdit = useStoreActions(
+    actions => actions.produk.setVisibleModalEdit
+  );
 
   useEffect(() => {
-    getList();
-  }, []);
+    // Get list tipe produk
+    getListTipeProduk();
+
+    // Jika visibleModalEdit true maka set form value dari get one produk
+    if (visibleModalEdit) {
+      const {
+        name,
+        product_types,
+        capital_price,
+        selling_price,
+        description
+      } = data;
+
+      form.setFields({
+        name: { value: name },
+        "product_types.product_types_id": {
+          value: product_types.product_types_id
+        },
+        capital_price: { value: capital_price },
+        selling_price: { value: selling_price },
+        description: { value: description }
+      });
+    }
+  }, [data]);
+
+  const validateHargaModal = (rule, value, callback) => {
+    const { getFieldValue } = form;
+    if (getFieldValue("capital_price") > value) {
+      callback("Harga jual harus lebih besar dari harga modal!");
+    }
+    callback();
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
+        if (!visibleModalEdit) {
+          postData(values);
+        } else {
+          const { product_id: id } = data;
+          putData({ id, data: values });
+        }
       }
     });
   };
 
-  const normFile = e => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
   return (
     <div>
-      <Form onSubmit={handleSubmit} className="login-form">
+      <Form onSubmit={handleSubmit}>
         <Form.Item label="Nama Produk" required>
           {getFieldDecorator("name", {
             rules: [{ required: true, message: "Mohon masukkan nama produk!" }]
@@ -50,8 +93,8 @@ function FormProduk({ form }) {
           )}
         </Form.Item>
         <Form.Item label="Tipe Produk" required>
-          {getFieldDecorator("select-multiple", {
-            rules: null
+          {getFieldDecorator("product_types.product_types_id", {
+            rules: [{ required: true, message: "Mohon pilih tipe produk!" }]
           })(
             <Select placeholder="Tipe Produk">
               {listTipeProduk.map(data => {
@@ -94,7 +137,8 @@ function FormProduk({ form }) {
             <Form.Item label="Harga Jual">
               {getFieldDecorator("selling_price", {
                 rules: [
-                  { required: true, message: "Mohon masukkan harga jual!" }
+                  { required: true, message: "Mohon masukkan harga jual!" },
+                  { validator: validateHargaModal }
                 ]
               })(
                 <InputNumber
@@ -125,14 +169,33 @@ function FormProduk({ form }) {
             />
           )}
         </Form.Item>
-        <Form.Item label="Gambar Produk">
+        <Row type="flex" justify="end" style={{ marginTop: 10 }}>
+          <Form.Item style={{ marginRight: 5 }}>
+            <Button
+              type="default"
+              onClick={() =>
+                visibleModalEdit
+                  ? setVisibleModalEdit(false)
+                  : setVisibleModalAdd(false)
+              }
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Row>
+        {/* <Form.Item label="Gambar Produk">
           <div className="dropbox">
             {getFieldDecorator("image", {
               valuePropName: "fileList",
               getValueFromEvent: normFile
             })(<SingleUpload />)}
           </div>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </div>
   );
